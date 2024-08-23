@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 15:06:51 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/08/19 17:05:49 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/08/23 15:52:23 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,6 @@ int	ft_atoi(const char *str)
 	return (res * signe);
 }
 
-int	ft_isdigit(int character)
-{
-	if (character >= '0' && character <= '9')
-		return (1);
-	return (0);
-}
-
-int	is_dead(t_philo *philo, int nb)
-{
-	pthread_mutex_lock(&philo->info->dead);
-	if (nb)
-		philo->info->stop = 1;
-	if (philo->info->stop)
-	{
-		pthread_mutex_unlock(&philo->info->dead);
-		return (1);
-	}
-	pthread_mutex_unlock(&philo->info->dead);
-	return (0);
-}
-
 long long	timestamp(void)
 {
 	struct timeval	tv;
@@ -76,13 +55,29 @@ void	ft_usleep(int ms)
 		usleep(ms / 10);
 }
 
+int	is_dead(t_philo *philo, int nb)
+{
+	pthread_mutex_lock(&philo->info->dead);
+	if (nb)
+		philo->info->stop = 1;
+	if (philo->info->stop)
+	{
+		pthread_mutex_unlock(&philo->info->dead);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->info->dead);
+	return (0);
+}
+
 void t_print(t_philo *philo, char *str)
 {
 	long int	time;
 
-	pthread_mutex_lock(&(philo->info->print));
+
 	time = timestamp() - philo->info->t_start;
-	if (!philo->info->stop && time >= 0 && time <= INT_MAX && !is_dead(philo, 0))
-		printf("%lld %d %s", timestamp() - philo->info->t_start, philo->n, str);
-	pthread_mutex_unlock(&(philo->info->print));
+	pthread_mutex_lock(&philo->info->print);
+	if (!philo->info->stop && time >= 0 
+		&& time <= INT_MAX && !is_dead(philo, 0))
+		printf("%lldms %d %s", timestamp() - philo->info->t_start, philo->n, str);
+	pthread_mutex_unlock(&philo->info->print);
 }

@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 12:33:24 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/08/19 17:33:18 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/08/22 14:41:55 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,8 @@ int			ft_atoi(const char *str);
 int			ft_isdigit(int character);
 long long	timestamp(void);
 void		*philo_life(void *phlshper);
-int			is_dead(t_philo *philo, int n);
 void		ft_usleep(int ms);
 void		t_print(t_philo *philo, char *str);
-
+int			is_dead(t_philo *philo, int nb);
 
 #endif
