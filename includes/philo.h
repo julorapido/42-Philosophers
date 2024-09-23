@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 12:33:24 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/08/22 14:41:55 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/23 18:19:51 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,11 @@
 typedef struct l_philo
 {
 	int				n;
-	int				m_count;
-	bool			is_eating;
+	int				eaten_meal;
+	int				eating;
+	int				dead;
 	pthread_t		thread;
-	long int		last_eat;
+	long int		last_meal;
 	struct l_info	*info;
 	pthread_mutex_t	*fork_r;
 	pthread_mutex_t	fork_l;
@@ -45,11 +46,17 @@ typedef struct l_info
 	int				stop;
 	long int		t_start;
 	t_philo			*philosophers;
-	pthread_mutex_t	print;
-	pthread_mutex_t	m_stop;
-	pthread_mutex_t	m_eat;
-	pthread_mutex_t	dead;
+	pthread_mutex_t	print_lock;	
+	pthread_mutex_t	eat_lock;
+	pthread_mutex_t	dead_lock;
+	pthread_t		monitor_thread;
 }		t_info;
+
+// monitoring
+void		*monitor(void *pointer);
+
+// action
+int			dead_loop(t_philo *philo);
 
 // utils
 int			ft_atoi(const char *str);

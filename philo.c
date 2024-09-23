@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 12:35:23 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/19 14:26:52 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/23 18:15:34 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,17 @@ static void	free_all(t_info *d)
 	i = 0;
 	while (i < d->n_philo)
 	{
-		pthread_mutex_destroy(d->philosophers[i].fork_r);
-		pthread_mutex_destroy(&d->philosophers[i].fork_l);
+		//pthread_mutex_destroy(d->philosophers[i].fork_l);
+		//pthread_mutex_destroy(&d->philosophers[i].fork_l);
 		i++;
 	}
-	pthread_mutex_destroy(&d->print);
-	pthread_mutex_destroy(&d->m_stop);
-	pthread_mutex_destroy(&d->m_eat);
-	pthread_mutex_destroy(&d->dead);
-	free(d->philosophers);
+	//if(&d->print)	
+	//	pthread_mutex_destroy(&d->print);
+	//pthread_mutex_destroy(&d->m_stop);
+	//pthread_mutex_destroy(&d->m_eat);
+	//pthread_mutex_destroy(&d->dead);
+	if(d->philosophers)
+		free(d->philosophers);
 }
 
 int	check_only_num(char **argv)
@@ -69,15 +71,18 @@ int	philosophers_init(t_info *d)
 {
 	int	i;
 
-	d->t_start = timestamp();
+	pthread_create(&(d->monitor_thread), NULL, &monitor, d);
+	d->	t_start = timestamp();
 	i = 0;
 	while (i < d->n_philo)
 	{	
 		d->philosophers[i].n = i + 1;
-		d->philosophers[i].last_eat = 0;
+		d->philosophers[i].last_meal = 0;
+		d->philosophers[i].dead = 0;
 		d->philosophers[i].fork_r = NULL;
 		d->philosophers[i].info = d;
-		d->philosophers[i].m_count = 0;
+		d->philosophers[i].eaten_meal = 0;
+		d->philosophers[i].eating = 0;
 		pthread_mutex_init(&(d->philosophers[i].fork_l), NULL);
 		if (i == d->n_philo - 1)
 			d->philosophers[i].fork_r = &d->philosophers[0].fork_l;
@@ -88,6 +93,7 @@ int	philosophers_init(t_info *d)
 			return (-1);
 		i++;
 	}
+	pthread_join(d->monitor_thread, NULL);
 	while (i-- > 0)
 		pthread_join(d->philosophers[i].thread, NULL);
 	return (0);
@@ -95,10 +101,9 @@ int	philosophers_init(t_info *d)
 
 int	t_info_init(t_info *data, char **av)
 {
-	pthread_mutex_init(&data->print, NULL);
-	pthread_mutex_init(&data->m_eat, NULL);
-	pthread_mutex_init(&data->m_stop, NULL);
-	pthread_mutex_init(&data->dead, NULL);
+	pthread_mutex_init(&data->print_lock, NULL);
+	pthread_mutex_init(&data->eat_lock, NULL);
+	pthread_mutex_init(&data->dead_lock, NULL);
 	data->stop = 0;
 	data->n_philo = ft_atoi(av[1]);
 	data->philosophers = (t_philo *) malloc(sizeof(t_philo) * data->n_philo);

@@ -1,9 +1,9 @@
 NAME = philo
 
-SRC = philo.c utils.c philo_actions.c
+SRC = philo.c utils.c philo_actions.c monitor.c
 SRC_OBJS = $(SRC:.c=.o)
 
-FLAGS = -Wall -Wextra 
+FLAGS = -Wall -Wextra -fsanitize=thread 
 INCLUDES = -I ./includes
 
 CORE_N = -D $(shell nproc -all)

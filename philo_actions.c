@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 15:44:05 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/19 13:00:18 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/23 18:12:43 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,79 +29,71 @@
 // ofc 
 // use another thread specific for checking philo deaths (pthread_detach)
 
-void	*philo_check_death(void *philo)
-{
-	t_philo	*p;
 
-	p = (t_philo *)philo;
-	ft_usleep(p->info->t_die + 1);
-	pthread_mutex_lock(&p->info->m_eat);
-	pthread_mutex_lock(&p->info->m_stop);
-	if (!is_dead(p, 0) && timestamp() - p->last_eat >= (long)(p->info->t_die))
-	{
-		pthread_mutex_unlock(&p->info->m_eat);
-		pthread_mutex_unlock(&p->info->m_stop);
-		t_print(p, " died\n");
-		is_dead(p, 1);
-	}
-	pthread_mutex_unlock(&p->info->m_eat);
-	pthread_mutex_unlock(&p->info->m_stop);
-	return (NULL);
+// THINK
+void	think(t_philo *philo)
+{
+	t_print(philo, "is thinking");
 }
 
-void	philo_take_fork(t_philo *philo)
+// SLEEP
+void	sleeep(t_philo *philo)
 {
-	pthread_mutex_lock(&(philo->fork_l));
-	t_print(philo, " has taken a fork (L) \n");
+	t_print(philo, "is sleeping");
+	ft_usleep(philo->info->t_sleep);
+}
+
+// EAT
+void	eat(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->fork_l);
+	t_print(philo, "has taken a fork (L)");
 	if (philo->info->n_philo == 1)
 	{
-		ft_usleep(philo->info->t_die * 2);
+		ft_usleep(philo->info->t_die);
+		pthread_mutex_unlock(&philo->fork_l);
 		return ;
 	}
 	pthread_mutex_lock(philo->fork_r);
-	t_print(philo, " has taken a fork (R) \n");
+	t_print(philo, "has taken a fork (R)");
+	philo->eating = 1;
+	t_print(philo, "is eating");
+	pthread_mutex_lock(&philo->info->eat_lock);
+	philo->last_meal = timestamp();
+	philo->eaten_meal++;
+	pthread_mutex_unlock(&philo->info->eat_lock);
+	ft_usleep(philo->info->t_eat);
+	philo->eating = 0;
+	pthread_mutex_unlock(&philo->fork_l);
+	pthread_mutex_unlock(philo->fork_r);
 }
 
-void	philo_eat_sleep_think(t_philo *philo)
+
+// Checks if the value of dead_flag changed
+int	dead_loop(t_philo *philo)
 {
-	t_print(philo, " is eating\n");
-	pthread_mutex_lock(&(philo->info->m_eat));
-	philo->last_eat = timestamp();
-	philo->m_count++;
-	pthread_mutex_unlock(&(philo->info->m_eat));
-	ft_usleep(philo->info->t_eat);
-	pthread_mutex_unlock(philo->fork_r);
-	pthread_mutex_unlock(&(philo->fork_l));
-	t_print(philo, " is sleeping\n");
-	ft_usleep(philo->info->t_sleep);
-	t_print(philo, " is thinking\n");
+	pthread_mutex_lock(&philo->info->dead_lock);
+	if (philo->dead == 1)
+	{
+		return (pthread_mutex_unlock(&philo->info->dead_lock), 1);
+	}
+	pthread_mutex_unlock(&philo->info->dead_lock);
+	return (0);
 }
+
 
 void	*philo_life(void *phlshper)
 {	
 	t_philo		*philo;
-	pthread_t	t;
 
 	philo = (t_philo *)phlshper;
 	if (philo->n % 2 == 0)
-		ft_usleep(philo->info->t_eat / 10);
-	while (!is_dead(philo, 0))
+		ft_usleep(philo->info->t_eat / 10);	
+	while (!dead_loop(philo))
 	{
-		pthread_create(&t, NULL, philo_check_death, phlshper);
-		philo_take_fork(philo);
-		philo_eat_sleep_think(philo);
-		pthread_detach(t);
-		if (philo->m_count == philo->info->n_eat)
-		{
-			pthread_mutex_lock(&philo->info->m_stop);
-			if (++philo->info->philo_eat == philo->info->n_philo)
-			{
-				pthread_mutex_unlock(&philo->info->m_stop);
-				is_dead(philo, 2);
-			}
-			pthread_mutex_unlock(&philo->info->m_stop);
-			return (NULL);
-		}
+		eat(philo);
+		sleeep(philo);
+		think(philo);
 	}
 	return (NULL);
 }
