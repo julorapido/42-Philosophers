@@ -1,6 +1,6 @@
 NAME = philo
 
-SRC = philo.c utils.c philo_actions.c monitor.c
+SRC = philo.c utils.c philo_actions.c monitor.c init.c
 SRC_OBJS = $(SRC:.c=.o)
 
 FLAGS = -Wall -Wextra -fsanitize=thread 

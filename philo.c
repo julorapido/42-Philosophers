@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 12:35:23 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/23 18:15:34 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:57:15 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,24 +27,23 @@
 //			[
 //			[
 
-static void	free_all(t_info *d)
+void	destroy_all(char *str, t_info *d)
 {
 	int	i;
 
 	i = 0;
+	if (str)
+	{
+		printf("%s \n", str);
+	}
+	pthread_mutex_destroy(&d->print_lock);
+	pthread_mutex_destroy(&d->eat_lock);
+	pthread_mutex_destroy(&d->dead_lock);
 	while (i < d->n_philo)
 	{
-		//pthread_mutex_destroy(d->philosophers[i].fork_l);
-		//pthread_mutex_destroy(&d->philosophers[i].fork_l);
+		pthread_mutex_destroy(&d->philosophers[i].fork_l);
 		i++;
 	}
-	//if(&d->print)	
-	//	pthread_mutex_destroy(&d->print);
-	//pthread_mutex_destroy(&d->m_stop);
-	//pthread_mutex_destroy(&d->m_eat);
-	//pthread_mutex_destroy(&d->dead);
-	if(d->philosophers)
-		free(d->philosophers);
 }
 
 int	check_only_num(char **argv)
@@ -67,80 +66,26 @@ int	check_only_num(char **argv)
 	return (0);
 }
 
-int	philosophers_init(t_info *d)
-{
-	int	i;
-
-	pthread_create(&(d->monitor_thread), NULL, &monitor, d);
-	d->	t_start = timestamp();
-	i = 0;
-	while (i < d->n_philo)
-	{	
-		d->philosophers[i].n = i + 1;
-		d->philosophers[i].last_meal = 0;
-		d->philosophers[i].dead = 0;
-		d->philosophers[i].fork_r = NULL;
-		d->philosophers[i].info = d;
-		d->philosophers[i].eaten_meal = 0;
-		d->philosophers[i].eating = 0;
-		pthread_mutex_init(&(d->philosophers[i].fork_l), NULL);
-		if (i == d->n_philo - 1)
-			d->philosophers[i].fork_r = &d->philosophers[0].fork_l;
-		else
-			d->philosophers[i].fork_r = &d->philosophers[i + 1].fork_l;
-		if (pthread_create(&d->philosophers[i].thread, NULL,
-				philo_life, &(d->philosophers[i])) != 0)
-			return (-1);
-		i++;
-	}
-	pthread_join(d->monitor_thread, NULL);
-	while (i-- > 0)
-		pthread_join(d->philosophers[i].thread, NULL);
-	return (0);
-}
-
-int	t_info_init(t_info *data, char **av)
-{
-	pthread_mutex_init(&data->print_lock, NULL);
-	pthread_mutex_init(&data->eat_lock, NULL);
-	pthread_mutex_init(&data->dead_lock, NULL);
-	data->stop = 0;
-	data->n_philo = ft_atoi(av[1]);
-	data->philosophers = (t_philo *) malloc(sizeof(t_philo) * data->n_philo);
-	if (!data->philosophers)
-		return (2);
-	if (check_only_num(av))
-	{
-		printf("Invalid Arguments \n");
-		return (1);
-	}
-	data->t_die = ft_atoi(av[2]);
-	data->t_eat = ft_atoi(av[3]);
-	data->t_sleep = ft_atoi(av[4]);
-	data->n_eat = -1;
-	if (av[5])
-		data->n_eat = ft_atoi(av[5]);
-	if (av[5] && data->n_eat == 0)
-		return (1);
-	return (0);
-}
-
 int	main(int ac, char **argv)
 {
 	t_info	data;
+	int		e;
 
-	if (ac != 5 && ac != 6)
+	if ((ac != 5 && ac != 6) || check_only_num(argv))
 	{
-		printf("This program requires 4-5 arguments.\n");
+		printf("This program requires 4-5 arguments[INTERGERS ONLY].\n");
 		printf("Arguments -philos_nbr -time_die -time_eat -time_sleep\n");
 		return (EXIT_FAILURE);
 	}
-	if (t_info_init(&data, argv) == 1)
-	{	
-		free(data.philosophers);
-		return (EXIT_FAILURE);
+	e = init_t_info(&data, argv);
+	if (e == -1)
+	{
+		printf("1ms 1 died\n");
+		return (EXIT_SUCCESS);
 	}
-	philosophers_init(&data);
-	free_all(&data);
+	init_mutexes(&data);
+	init_philos(&data);
+	thread_create(&data);
+	destroy_all("", &data);
 	return (EXIT_SUCCESS);
 }

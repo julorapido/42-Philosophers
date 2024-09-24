@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 12:33:24 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/23 18:19:51 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:52:37 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,13 @@ typedef struct l_info
 	int				t_die;
 	int				t_eat;
 	int				t_sleep;
-	int				n_eat;
-	int				stop;
-	long int		t_start;
+	int				n_eat;	
+	long int		t_start;	
 	t_philo			*philosophers;
 	pthread_mutex_t	print_lock;	
 	pthread_mutex_t	eat_lock;
 	pthread_mutex_t	dead_lock;
-	pthread_t		monitor_thread;
+	pthread_t		monitor;
 }		t_info;
 
 // monitoring
@@ -58,10 +57,19 @@ void		*monitor(void *pointer);
 // action
 int			dead_loop(t_philo *philo);
 
+// init
+void		init_mutexes(t_info	*d);
+void		init_philos(t_info *d);
+void		thread_create(t_info *d);
+int			init_t_info(t_info *data, char **av);
+
+// destroy
+void		destroy_all(char *str, t_info *d);
+
 // utils
+long long	timestamp(void);
 int			ft_atoi(const char *str);
 int			ft_isdigit(int character);
-long long	timestamp(void);
 void		*philo_life(void *phlshper);
 void		ft_usleep(int ms);
 void		t_print(t_philo *philo, char *str);

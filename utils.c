@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 15:06:51 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/23 18:20:33 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:29:03 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,29 +55,13 @@ void	ft_usleep(int ms)
 		usleep(ms / 10);
 }
 
-/*
-int	is_dead(t_philo *philo, int nb)
-{
-	pthread_mutex_lock(&philo->info->dead);
-	if (nb)
-		philo->info->stop = 1;
-	if (philo->info->stop)
-	{
-		pthread_mutex_unlock(&philo->info->dead);
-		return (1);
-	}
-	pthread_mutex_unlock(&philo->info->dead);
-	return (0);
-}
-*/
 void	t_print(t_philo *philo, char *str)
 {
-	long int		time;
-	
+	long int	time;
+
 	pthread_mutex_lock(&philo->info->print_lock);
 	time = timestamp() - philo->info->t_start;
-	//if (!philo->info->stop && time >= 0 && time <= INT_MAX && !is_dead(philo, 0))
-	if(!dead_loop(philo))
+	if (!dead_loop(philo))
 		printf("%ldms %d %s", time, philo->n, str);
 	pthread_mutex_unlock(&philo->info->print_lock);
 }
