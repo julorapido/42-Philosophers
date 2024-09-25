@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:12:41 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/24 15:55:30 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 12:23:30 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "philo.h"
@@ -16,7 +16,12 @@ int	init_t_info(t_info *data, char **av)
 {	
 	data->n_philo = ft_atoi(av[1]);
 	if (data->n_philo == 1)
+	{
+		printf("1ms 1 take his fork (L)\n");
+		ft_usleep(ft_atoi(av[2]));
+		printf("%ldms 1 died\n", (long)ft_atoi(av[2]));
 		return (-1);
+	}
 	data->philosophers = (t_philo *) malloc(sizeof(t_philo) * data->n_philo);
 	if (!data->philosophers)
 		return (2);

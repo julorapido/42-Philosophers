@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 12:35:23 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/24 15:57:15 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 12:25:14 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	destroy_all(char *str, t_info *d)
 	int	i;
 
 	i = 0;
-	if (str)
+	if (str[0] != '\0')
 	{
 		printf("%s \n", str);
 	}
@@ -44,6 +44,7 @@ void	destroy_all(char *str, t_info *d)
 		pthread_mutex_destroy(&d->philosophers[i].fork_l);
 		i++;
 	}
+	free(d->philosophers);
 }
 
 int	check_only_num(char **argv)
@@ -79,10 +80,7 @@ int	main(int ac, char **argv)
 	}
 	e = init_t_info(&data, argv);
 	if (e == -1)
-	{
-		printf("1ms 1 died\n");
 		return (EXIT_SUCCESS);
-	}
 	init_mutexes(&data);
 	init_philos(&data);
 	thread_create(&data);
