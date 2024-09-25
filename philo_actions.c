@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 15:44:05 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/25 13:21:24 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:23:50 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // THINK
 void	think(t_philo *philo)
-{
+{	
 	t_print(philo, "is thinking\n");
 }
 
@@ -29,7 +29,8 @@ void	sleeep(t_philo *philo)
 void	eat(t_philo *philo)
 {
 	if (philo->n % 2 == 1)
-	{
+	{	
+		usleep(philo->info->t_die);
 		pthread_mutex_lock(&philo->fork_l);
 		t_print(philo, "has taken a fork (L)\n");
 		pthread_mutex_lock(philo->fork_r);
@@ -41,7 +42,7 @@ void	eat(t_philo *philo)
 		t_print(philo, "has taken a fork (R)\n");
 		pthread_mutex_lock(&philo->fork_l);
 		t_print(philo, "has taken a fork (L)\n");
-	}
+	}	
 	philo->eating = 1;
 	t_print(philo, "is eating\n");
 	pthread_mutex_lock(&philo->info->eat_lock);
@@ -71,6 +72,8 @@ void	*philo_life(void *phlshper)
 	t_philo		*philo;
 
 	philo = (t_philo *)phlshper;
+	pthread_mutex_lock(&philo->info->eat_lock);
+	pthread_mutex_unlock(&philo->info->eat_lock);
 	while (!dead_loop(philo))
 	{
 		eat(philo);

@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 12:33:24 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/24 15:52:37 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:11:35 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct l_info
 	t_philo			*philosophers;
 	pthread_mutex_t	print_lock;	
 	pthread_mutex_t	eat_lock;
-	pthread_mutex_t	dead_lock;
+	pthread_mutex_t	dead_lock;	
 	pthread_t		monitor;
 }		t_info;
 

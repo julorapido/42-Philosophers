@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jsaintho <jsaintho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 17:29:22 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/24 15:34:07 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:02:52 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void	*monitor(void *p)
 		if (check_if_dead(td->philosophers, td->n_philo, td->t_die) == 1
 			|| (check_if_all_ate(td->philosophers) == 1))
 			break ;
+		usleep(1);
 	}
 	return (p);
 }

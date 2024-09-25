@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jsaintho <jsaintho@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/23 15:06:51 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/24 15:29:03 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:13:34 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ long long	timestamp(void)
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
+//long int	time;
+//time = timestamp();
+//while (timestamp() - time < ms)
+//		usleep(ms / 10)
 void	ft_usleep(int ms)
 {
-	long int	time;
-
-	time = timestamp();
-	while (timestamp() - time < ms)
-		usleep(ms / 10);
+	usleep(ms * 1000);
 }
 
 void	t_print(t_philo *philo, char *str)

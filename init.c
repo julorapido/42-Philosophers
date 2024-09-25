@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:12:41 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/25 13:07:18 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:24:02 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "philo.h"
@@ -46,7 +46,7 @@ void	init_mutexes(t_info	*d)
 	{
 		pthread_mutex_init(&d->philosophers[i].fork_l, NULL);
 		i++;
-	}
+	}	
 	pthread_mutex_init(&d->print_lock, NULL);
 	pthread_mutex_init(&d->dead_lock, NULL);
 	pthread_mutex_init(&d->eat_lock, NULL);
@@ -81,6 +81,7 @@ void	thread_create(t_info *d)
 {
 	int	i;
 
+	pthread_mutex_lock(&d->eat_lock);
 	if (pthread_create(&d->monitor, NULL, &monitor, d) != 0)
 		destroy_all("Thread creation error", d);
 	i = 0;
@@ -92,6 +93,7 @@ void	thread_create(t_info *d)
 		i++;
 	}
 	i = 0;
+	pthread_mutex_unlock(&d->eat_lock);
 	if (pthread_join(d->monitor, NULL) != 0)
 		destroy_all("Thread join error", d);
 	while (i < d->n_philo)
