@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 15:44:05 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/24 15:57:03 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 13:08:00 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	sleeep(t_philo *philo)
 // EAT
 void	eat(t_philo *philo)
 {
-	if (philo-> n % 2 == 1)
+	if (philo->n % 2 == 0)
 	{
 		pthread_mutex_lock(&philo->fork_l);
 		t_print(philo, "has taken a fork (L)\n");

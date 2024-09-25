@@ -6,7 +6,7 @@
 /*   By: jsaintho <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 13:12:41 by jsaintho          #+#    #+#             */
-/*   Updated: 2024/09/25 12:23:30 by jsaintho         ###   ########.fr       */
+/*   Updated: 2024/09/25 13:07:18 by jsaintho         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "philo.h"
@@ -68,10 +68,10 @@ void	init_philos(t_info *d)
 		d->philosophers[i].info = d;
 		d->philosophers[i].eaten_meal = 0;
 		d->philosophers[i].eating = 0;
-		if (i == d->n_philo - 1)
-			d->philosophers[i].fork_r = &d->philosophers[0].fork_l;
+		if (i == 0)
+			d->philosophers[i].fork_r = &d->philosophers[d->n_philo - 1].fork_l;
 		else
-			d->philosophers[i].fork_r = &d->philosophers[i + 1].fork_l;
+			d->philosophers[i].fork_r = &d->philosophers[i - 1].fork_l;
 		i++;
 	}	
 }
